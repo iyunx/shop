@@ -17,8 +17,25 @@
         <!-- Right Side Of Navbar -->
         <ul class="navbar-nav navbar-right">
           <!-- Authentication Links -->
-          <li class="nav-item"><a class="nav-link" href="#">登录</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">注册</a></li>
+          @auth
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{Auth::user()->name}}
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">个人中心</a>
+              <a class="dropdown-item" href="#">修改资料</a>
+              <div class="dropdown-divider"></div>
+              <form action="{{route('logout')}}" method="post">
+                @csrf
+                <button class="dropdown-item">退出</button>
+              </form>
+            </div>
+          </li>
+          @else
+          <li class="nav-item"><a class="nav-link" href="{{route('login')}}">登录</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{route('register')}}">注册</a></li>
+          @endauth
         </ul>
       </div>
     </div>
