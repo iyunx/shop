@@ -4,7 +4,14 @@
 <div class="row">
     <div class="col-md-10 offset-1">
         <div class="card">
-            <div class="card-header">收货地址</div>
+            <div class="card-header">
+                <a class="float-right" href="{{route('address.create')}}">
+                    新增收货地址
+                </a>
+                <span>
+                    收货地址
+                </span>
+            </div>
             <div class="card-body">
                 <table class="table table-bordered table-striped">
                     <thead>
@@ -24,7 +31,7 @@
                             <td>{{$item->zip}}</td>
                             <td>{{$item->contact_phone}}</td>
                             <td>
-                                <button type="button" class="btn btn-primary">修改</button>
+                                <a href="{{route('address.edit', $item)}}" class="btn btn-primary">修改</a>
                                 <button type="button" class="btn btn-danger">删除</button>
                             </td>
                         </tr>
