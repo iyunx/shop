@@ -23,7 +23,7 @@
               {{Auth::user()->name}}
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="#">个人中心</a>
+              <a class="dropdown-item" href="{{route('address')}}">收获地址</a>
               <a class="dropdown-item" href="#">修改资料</a>
               <div class="dropdown-divider"></div>
               <form action="{{route('logout')}}" method="post">

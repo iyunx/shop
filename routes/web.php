@@ -7,3 +7,4 @@ Route::get('/', 'PagesController@root')->name('root')->middleware(['verified']);
 
 Auth::routes(['verify' => true]);
 
+Route::get('address', 'UserAddressController@index')->name('address');
