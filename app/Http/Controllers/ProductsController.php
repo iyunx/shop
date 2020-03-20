@@ -30,8 +30,20 @@ class ProductsController extends Controller
                 }
             }
         }
+
         $products = $builder->paginate(16);
+        
+        //搜索排序集合
         $filters = ['search'=>$search, 'order'=>$order];
+
         return view('product.index', compact('products', 'filters'));
+    }
+
+    public function show(Product $product)
+    {
+        if (!$product->on_sale) {
+            throw new \Exception('商品未上架');
+        }
+        return view('product.show', compact('product'));
     }
 }
