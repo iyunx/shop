@@ -33,7 +33,7 @@
         </div>
         <div class="cart_amount"><label>数量</label><input type="text" class="form-control form-control-sm" value="1"><span>件</span><span class="stock"></span></div>
         <div class="buttons">
-          <button class="btn btn-success btn-favor">❤ 收藏</button>
+          <button class="btn btn-favor {{$favored?'btn-danger':'btn-success'}}">{{$favored?'取消收藏':'❤ 收藏'}}</button>
           <button class="btn btn-primary btn-add-to-cart">加入购物车</button>
         </div>
       </div>
@@ -62,12 +62,35 @@
 @stop
 
 @section('js')
+<style>
+  .swal-modal {
+    margin-top: -200px;
+  }
+</style>
 <script>
-    $('[data-toggle="tooltip"]').tooltip({trigger: 'hover'});
-    $('.sku-btn').click(function () {
-        //这里抗疫用attr 或data获取对应模块的其他数据
-        $('.product-info .price span').text($(this).data('price'));
-        $('.product-info .stock').html('库存：' + $(this).attr('stock') + '件');
-      });
+  $('[data-toggle="tooltip"]').tooltip({trigger: 'hover'});
+  $('.sku-btn').click(function () {
+    //这里可以用attr 或data获取对应模块的其他数据
+    $('.product-info .price span').text($(this).data('price'));
+    $('.product-info .stock').html('库存：' + $(this).attr('stock') + '件');
+  });
+
+  //商品收藏或取消
+  $('.btn-favor').click(function(){
+    axios.{{$favored?'delete':'post'}}("{{route('products.favor', $product->id)}}")
+         .then(()=>{
+           swal('操作成功', '', 'success');
+           setTimeout(()=>location.reload(), 2000)
+          })
+         .catch((error)=>{
+          if(error.response && error.response.status === 401){
+            swal('请先登录', '', 'error');
+          }else if(error.response && (error.response.data.msg || error.response.data.message)){
+            swal(error.response.data.msg ? error.response.data.msg : error.response.data.message, '', 'error')
+          }else{
+            swal('系统错误', '', 'error')
+          }
+         })
+  });
 </script>
 @stop

@@ -53,3 +53,5 @@ if (token) {
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+//alert交互弹窗
+require('sweetalert');

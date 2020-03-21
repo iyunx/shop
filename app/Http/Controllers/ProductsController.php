@@ -40,13 +40,41 @@ class ProductsController extends Controller
         return view('product.index', compact('products', 'filters'));
     }
 
-    public function show(Product $product)
+    public function show(Product $product, Request $request)
     {
         if (!$product->on_sale) {
             // InvalidRequestException自定义的错误类，app\exceptions
             // make:exception 新建错误类
             throw new InvalidRequestException('商品未上架');
         }
-        return view('product.show', compact('product'));
+
+        $favored = false;
+        if($user = $request->user()){
+            //boolval() 找到返回true, 否则false
+            $favored = boolval($user->favoriteProducts()->find($product->id));
+        }
+        return view('product.show', compact('product', 'favored'));
+    }
+
+    //商品收藏
+    public function favor(Product $product, Request $request)
+    {
+        $user = $request->user();
+        //如果此商品已经被收藏
+        if ($user->favoriteProducts()->find($product->id)) return [];
+
+        //通过 attach() 方法将当前用户和此商品关联起来。或：attach($product->id)
+        $user->favoriteProducts()->attach($product);
+        
+        return [];
+    }
+
+    //取消收藏
+    public function disfavor(Product $product, Request $request)
+    {
+        $user = $request->user();
+        //detach() 方法用于取消多对多的关联，接受的参数个数与 attach() 方法一致。
+        $user->favoriteProducts()->detach($product);
+        return [];
     }
 }

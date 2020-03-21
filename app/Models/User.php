@@ -41,4 +41,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(UserAddress::class);
     }
+
+    public function favoriteProducts()
+    {
+        //用户的商品收藏信息，存于中间表user_favorite_products中
+        // belongsToMany('user表', 'products商品表', 'user_id', 'product_id')
+        return $this->belongsToMany(Product::class, 'user_favorite_products')
+                    ->withTimestamps()
+                    ->orderByDesc('user_favorite_products.created_at'); //排序调用中间表的收藏商品时间
+    }
 }

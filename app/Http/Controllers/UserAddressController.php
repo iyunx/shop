@@ -35,11 +35,13 @@ class UserAddressController extends Controller
     }
     public function edit(UserAddress $address)
     {
+        $this->authorize('own', $address);
         return view('user_address.create_and_edit', compact('address'));
     }
 
     public function update(UserAddress $address, UserAddressRequest $request)
     {
+        $this->authorize('own', $address);
         $address->update($request->only([
             'province',
             'city',
@@ -54,7 +56,8 @@ class UserAddressController extends Controller
 
     public function destroy(UserAddress $address)
     {
+        $this->authorize('own', $address);
         $address->delete();
-        return redirect()->route('address.index');
+        return;
     }
 }
