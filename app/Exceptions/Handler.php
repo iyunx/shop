@@ -9,11 +9,12 @@ class Handler extends ExceptionHandler
 {
     /**
      * A list of the exception types that are not reported.
-     *
+     * 屏蔽指定异常写日志的解决方案：
      * @var array
      */
     protected $dontReport = [
-        //
+        //屏蔽商品下架，访问此商品的错误500日志
+        InvalidRequestException::class,
     ];
 
     /**
