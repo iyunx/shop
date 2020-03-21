@@ -24,7 +24,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="{{route('address.index')}}">收获地址</a>
-              <a class="dropdown-item" href="#">修改资料</a>
+              <a class="dropdown-item" href="{{route('products.favorites')}}">商品收藏</a>
               <div class="dropdown-divider"></div>
               <form action="{{route('logout')}}" method="post">
                 @csrf
