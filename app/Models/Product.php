@@ -16,7 +16,7 @@ class Product extends Model
         return $this->hasMany(ProductSku::class);
     }
 
-    //访问器，图片访问器
+    //访问器，商品图片访问器
     public function getImageAttribute()
     {
         // 如果 image 字段本身就已经是完整的 url 就直接返回
