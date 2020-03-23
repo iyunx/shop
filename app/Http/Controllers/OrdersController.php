@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidRequestException;
 use App\Http\Requests\OrderRequest;
+use App\Jobs\CloseOrder;
 use App\Models\ProductSku;
 use App\Models\UserAddress;
 use App\Models\Order;
@@ -80,9 +81,11 @@ class OrdersController extends Controller
             //完成订单，还需要减去购买的商品数量，更新库存 不能直接更新，高并发会有问题
             //ProductSku::update(['stock'=>$sku->stock - $amount]);
 
-
+            return $order;
         });
 
+        //job事件，order_ttl中ttl时间设定，config就是根目录的config目录，但干嘛把时间：一定要设定到config/app.php中
+        $this->dispatch(new CloseOrder($order, config('app.order_ttl')));
         //返回 数据库事务集合
         return $order;
     }

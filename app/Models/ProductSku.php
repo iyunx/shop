@@ -23,6 +23,7 @@ class ProductSku extends Model
         return $this->where('id', $this->id)->where('stock', '>=', $amount)->decrement('stock', $amount);
     }
 
+    //提交订单后，有一个过期时间，过期后，订单取消，订单中的商品数量，返回给库存
     public function addStock($amount)
     {
         if($amount<0) throw new InternalException('加库存不可小于0');
