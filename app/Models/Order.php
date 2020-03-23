@@ -102,7 +102,7 @@ class Order extends Model
         for($i=0; $i<10; $i++){
             //随机生成6位的数字
             //str_pad（短信验证码或其他，6长度的验证码，不足6为用0填充，填充在左侧STR_PAD_LEFT） random_int随机整数
-            $no = $prefix.str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $no = $prefix.str_pad(random_int(0, 999999), 6, '0', STR_PAD_RIGHT);
             //判断是否已经存在
             if(!static::query()->where('no', $no)->exists()){
                 return $no;

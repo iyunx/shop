@@ -111,7 +111,7 @@
         let req = {
             address_id: $('#order-form').find('select[name=address]').val(),
             items: [],
-            remark: $('#order-form').find('input[name=remark]').val()
+            remark: $('#order-form').find('textarea[name=remark]').val()
         };
         //遍历<table>标签中带有data-id属性的tr标签，此标签id为sku
         $('table tr[data-id]').each(function(){
@@ -133,16 +133,18 @@
         });
 
         axios.post("{{route('orders.store')}}", req)
-             .then(res=>swal('订单提交成功', '', 'success'))
+             .then(res=>{
+                swal('订单提交成功', '', 'success'),
+                setTimeout(()=>location.href="/orders/"+res.data.id, 2000)
+             })
              .catch(error=>{
                 if(error.response.status === 401) return swal('请登录', '', 'warning');
-                 if(error.response.status === 422){
-                     let html = '';
+                if(error.response.status === 422){
+                    let html = '';
                     $.each(error.response.data.errors, (index, error)=>html = error[0]);
                     return swal(html, '', 'warning');
-                 }else{
-                    return swal('系统错误', '', 'error');
-                 }
+                }
+                return swal('系统错误', '', 'error');
              })
 
     });

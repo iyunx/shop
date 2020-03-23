@@ -9,10 +9,20 @@ use App\Models\ProductSku;
 use App\Models\UserAddress;
 use App\Models\Order;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class OrdersController extends Controller
 {
+    public function index(Request $request)
+    {
+        $orders = Order::query()
+                    ->with('items.product', 'items.productSku') //解决n+1, 点式链接
+                    ->where('user_id', $request->user()->id) //判断此订单用户id和当前提交订单的用户是否一致
+                    ->orderByDesc('created_at')
+                    ->paginate();
+        return view('orders.index', compact('orders'));
+    }
     public function store(OrderRequest $request)
     {
         $user = $request->user();
@@ -88,5 +98,11 @@ class OrdersController extends Controller
         $this->dispatch(new CloseOrder($order, config('app.order_ttl')));
         //返回 数据库事务集合
         return $order;
+    }
+
+    public function show(Order $order)
+    {
+        $this->authorize('own', $order);
+        return view('orders.show', ['order'=>$order->load(['items.productSku', 'items.product'])]);
     }
 }
