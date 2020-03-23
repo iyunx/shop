@@ -9,11 +9,13 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    // 购物车首页
     public function index(Request $request)
     {
         //可以使用 「点」 语法预加载嵌套关联。
         $cartItems = $request->user()->cartItems()->with(['productSku.product'])->get();
-        return view('cart.index', compact('cartItems'));
+        $addresses = $request->user()->address()->orderByDesc('last_used_at')->get();
+        return view('cart.index', compact('cartItems', 'addresses'));
     }
 
     public function add(CartRequest $request)
@@ -42,4 +44,5 @@ class CartController extends Controller
         $request->user()->cartItems()->where('product_sku_id', $sku->id)->delete();
         return;
     }
+
 }

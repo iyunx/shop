@@ -28,8 +28,12 @@
                 <div @if(!$item->productSku->product->on_sale) class="not_on_sale" @endif>
                     <span class="product_title">{{$item->productSku->product->title}}</span>
                     <span class="sku_title">{{$item->productSku->title}}</span>
-                    @if (!$item->productSku->product->on_sale || !$item->productSku->stock)
+                    @if (!$item->productSku->product->on_sale)
                     <span class="warning">该商品已经下架</span>
+                    @elseif($item->productSku->stock < 1)
+                    <span class="warning">该商品库存不足</span>
+                    @else
+                    <span class="warning">库存：{{$item->productSku->stock}}</span>
                     @endif
                 </div>
             </td>
@@ -42,6 +46,33 @@
       @endforeach
       </tbody>
     </table>
+    <!-- 开始 -->
+    <div>
+      <form class="form-horizontal" role="form" id="order-form">
+        <div class="form-group row">
+            <label class="col-form-label col-sm-3 text-md-right">选择收货地址</label>
+            <div class="col-sm-9 col-md-7">
+            <select class="form-control" name="address">
+                @foreach($addresses as $address)
+                <option value="{{ $address->id }}">{{ $address->full_address }} {{$address->contact_name}} {{$address->contact_phone}}</option>
+                @endforeach
+            </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-form-label col-sm-3 text-md-right">备注</label>
+            <div class="col-sm-9 col-md-7">
+            <textarea name="remark" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="offset-sm-3 col-sm-3">
+            <button type="button" class="btn btn-primary btn-create-order">提交订单</button>
+            </div>
+        </div>
+      </form>
+    </div>
+    <!-- 结束 -->
   </div>
 </div>
 </div>
@@ -72,6 +103,48 @@
         sub.each(function(){
             $(this).prop('checked', checked);
         });
+    });
+
+    //提交订单
+    $('.btn-create-order').click(function(){
+        //要提交给后台的数据结合
+        let req = {
+            address_id: $('#order-form').find('select[name=address]').val(),
+            items: [],
+            remark: $('#order-form').find('input[name=remark]').val()
+        };
+        //遍历<table>标签中带有data-id属性的tr标签，此标签id为sku
+        $('table tr[data-id]').each(function(){
+            // 获取当前行的单选框
+            let $checkbox = $(this).find('input[name=select][type=checkbox]');
+            //如果单选框被禁用或没有被选中的则跳过
+            if( $checkbox.prop('disabled') || !$checkbox.prop('checked') ) return;
+
+            //获取当前输入框购买商品的数量
+            let $input = $(this).find('input[name=amount]').val();
+            // 如果用户将数量设为 0 或者不是一个数字，则也跳过
+            if($input == 0 || isNaN($input) ) return;
+            
+            //把sku id和数量存入请求参数items中
+            req.items.push({
+                sku_id:$(this).data('id'),
+                amount:$input
+            });
+        });
+
+        axios.post("{{route('orders.store')}}", req)
+             .then(res=>swal('订单提交成功', '', 'success'))
+             .catch(error=>{
+                if(error.response.status === 401) return swal('请登录', '', 'warning');
+                 if(error.response.status === 422){
+                     let html = '';
+                    $.each(error.response.data.errors, (index, error)=>html = error[0]);
+                    return swal(html, '', 'warning');
+                 }else{
+                    return swal('系统错误', '', 'error');
+                 }
+             })
+
     });
 </script>
 @stop

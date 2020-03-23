@@ -76,7 +76,7 @@ class Order extends Model
         //监听模型创建，写入数据库之前
         static::creating(function($model){
             //如果order模型的no字段为空
-            if($model->no){
+            if(!$model->no){
                 //findAvailableNo() 为自定义的方法
                 $model->no = static::findAvailableNo();
                 //如果订单流水号no字段创建失败，则终止创建订单
